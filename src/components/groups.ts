@@ -1,6 +1,7 @@
 import iconExit from "../icons/Vector.svg?raw";
 import iconBasket from "../icons/basket.svg?raw";
-function renderGroups(): string {
+import type { Group } from "../types";
+function renderGroups(groups: Group[]): string {
   return `
         <aside class="groups">
            <header class="groups__header">
@@ -10,6 +11,20 @@ function renderGroups(): string {
            </button>
            </header>
            <main class="groups__main">
+           <ul class="groups__list">
+        ${groups
+          .map(
+            (group) => `
+              <div class="group">
+              <li class="groups__item" data-id="${group.id}">
+                ${group.name}
+              </li>
+              <button data-group-id="${group.id}" class="groups__button_delete">${iconBasket}</button>
+              </div>
+            `,
+          )
+          .join("")}
+      </ul>
            <div class="group">
            <input id="group-name" type="text" placeholder="Введите название "/>
            <button class="groups__button_delete">${iconBasket}</button>
