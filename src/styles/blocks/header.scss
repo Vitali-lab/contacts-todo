@@ -1,0 +1,77 @@
+.header {
+  width: 100%;
+  height: 70px;
+  background-color: $color-white;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+
+  .header__container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+
+    .header__contacts {
+      display: flex;
+      align-items: center;
+      width: 167px;
+
+      .header__icon {
+        margin-right: 10px;
+      }
+
+      .header__title h3 {
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 120%;
+        color: $color-primary;
+        letter-spacing: 0px;
+        font-family: $font-primary;
+      }
+    }
+  }
+
+  .header__buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .header__button__add {
+      width: 178px;
+      height: 38px;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: $radius-button;
+      background-color: $color-red;
+      color: $color-white;
+      font-family: $font-primary;
+      font-size: 14px;
+      font-weight: 700;
+      transition: $button-transition;
+    }
+    .header__button__add:hover {
+      background-color: $hover-color-red;
+    }
+    .header__button__add::after {
+      content: "+";
+      margin-left: 10px;
+      font-size: 20px;
+    }
+    .header__button {
+      width: 82px;
+      height: 38px;
+      border: none;
+      border-radius: $radius-button;
+      background-color: $color-primary;
+      color: $color-white;
+      font-size: 14px;
+      font-weight: 700;
+      transition: $button-transition;
+    }
+    .header__button:hover {
+      background-color: $hover-color-primary;
+    }
+  }
+}

@@ -1,0 +1,23 @@
+.main {
+  width: 100%;
+  height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $color-bg;
+
+  .main__container {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    p {
+      color: $color-grey;
+      font-size: 18px;
+      font-weight: 400;
+    }
+  }
+}

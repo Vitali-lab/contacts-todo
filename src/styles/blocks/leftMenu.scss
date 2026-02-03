@@ -1,0 +1,79 @@
+.left-menu-add {
+  width: 312px;
+  height: 960px;
+  background-color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+
+  .left-menu-add__header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    height: 70px;
+    border-bottom: 1px solid $color-grey;
+
+    .left-menu-add__button {
+      border: none;
+      background-color: transparent;
+      z-index: 2;
+    }
+
+    h3 {
+      width: 174px;
+      height: 22px;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 120%;
+      color: $color-text;
+      letter-spacing: 0px;
+      font-family: $font-primary;
+    }
+  }
+  .left-menu-add__main {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    input,
+    select {
+      width: 264px;
+      height: 38px;
+      border-radius: $radius-button;
+      border: none;
+      outline: none;
+      padding: 10px;
+      background-color: $color-bg;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 120%;
+      color: $color-text;
+      letter-spacing: 0px;
+      font-family: $font-primary;
+    }
+  }
+  .left-menu-add__footer {
+    position: absolute;
+    top: 80%;
+    left: 184px;
+
+    .left-menu-add__button_save {
+      width: 104px;
+      height: 38px;
+      color: $color-white;
+      background-color: $color-primary;
+      border-radius: $radius-button;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 120%;
+      letter-spacing: 0px;
+      font-family: $font-primary;
+    }
+  }
+}
