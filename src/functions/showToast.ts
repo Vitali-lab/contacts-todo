@@ -7,5 +7,5 @@ export const showToast = (
   toast.style.transform = "translateX(0)";
   setTimeout(() => {
     toast.style.transform = "translateX(150%)";
-  }, 2000);
+  }, 1500);
 };

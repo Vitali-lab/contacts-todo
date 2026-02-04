@@ -10,6 +10,10 @@ import { renderPoap } from "./components/poap.ts";
 import { validationContacts } from "./functions/validationContacts.ts";
 import { validationGroups } from "./functions/validationGroups.ts";
 import { showToast } from "./functions/showToast.ts";
+import { renderLoader } from "./components/loader.ts";
+import { showLoader } from "./functions/showLoader.ts";
+import { renderEditingContacts } from "./components/editingContacts.ts";
+import IMask from "imask";
 
 function renderApp() {
   const contactsData: Contact[] = JSON.parse(
@@ -27,6 +31,8 @@ function renderApp() {
   ${renderGroups(groupsData)}
   ${renderToast()}
   ${renderPoap()}
+  ${renderLoader()}
+  ${renderEditingContacts()}
   `;
 }
 if (!localStorage.getItem("contacts")) {
@@ -36,18 +42,37 @@ if (!localStorage.getItem("groups")) {
   localStorage.setItem("groups", JSON.stringify([]));
 }
 const app = document.querySelector("#app")!;
+function initMasks() {
+  const inputs = ["#contact-number", "#edit-contact-number"];
+
+  inputs.forEach((selector) => {
+    const input = document.querySelector<HTMLInputElement>(selector);
+    if (input && !(input as any)._imask) {
+      IMask(input, { mask: "+{7} (000) 000-00-00" });
+    }
+  });
+}
 renderApp();
+initMasks();
 
 let elementId: string | null = null;
+let editingContactId: string | null = null;
+let selectedGroupId: string | null = null;
 
 app.addEventListener("click", (e) => {
-  //открытие и закрытие левого меню
   const leftMenu = document.querySelector<HTMLDivElement>(".left-menu-add")!;
   const groups = document.querySelector<HTMLDivElement>(".groups")!;
   const mask = document.querySelector<HTMLDivElement>(".mask")!;
   const toast = document.querySelector<HTMLDivElement>(".toast")!;
   const toastText = document.querySelector<HTMLDivElement>(".toast__text")!;
   const poap = document.querySelector<HTMLDivElement>(".poap")!;
+  const loader = document.querySelector<HTMLDivElement>(".loader__container")!;
+  const editContactButtonSave = document.querySelector<HTMLButtonElement>(
+    ".editing-contacts__button_save",
+  );
+  const editContactButtonCancel = document.querySelector<HTMLButtonElement>(
+    ".editing-contacts__button_cancel",
+  );
   const target = e.target as HTMLButtonElement;
 
   if (!leftMenu || !mask || !groups) return;
@@ -93,7 +118,6 @@ app.addEventListener("click", (e) => {
     console.log(elementId);
     return;
   }
-  console.log(elementId);
 
   const poapConfirm = target.closest<HTMLButtonElement>(
     ".poap__button_confirm",
@@ -124,11 +148,12 @@ app.addEventListener("click", (e) => {
     elementId = null;
 
     showToast(toast, toastText, "Группа успешно удалена");
-
+    showLoader(loader, true);
+    poap.style.display = "none";
     setTimeout(() => {
-      poap.style.display = "none";
       mask.style.display = "none";
       renderApp();
+      showLoader(loader, false);
     }, 2000);
   }
   //добавление групп
@@ -151,8 +176,12 @@ app.addEventListener("click", (e) => {
       localStorage.setItem("groups", JSON.stringify(groupsArray));
     }
     groupsInput.value = "";
+    console.log(loader, "load");
+
+    showLoader(loader, true);
     showToast(toast, toastText, "Группа успешно добавлена");
     setTimeout(() => {
+      showLoader(loader, false);
       renderApp();
     }, 2000);
   }
@@ -164,8 +193,8 @@ app.addEventListener("click", (e) => {
       document.querySelector<HTMLInputElement>("#contact-name")!;
     const contactInputNumber =
       document.querySelector<HTMLInputElement>("#contact-number")!;
-    const groupsSelect =
-      document.querySelector<HTMLSelectElement>("#contact-group")!;
+
+    console.log(selectedGroupId, "selectedGroupId");
 
     if (!contactInputName.value) {
       contactInputName.style.border = "1px solid red";
@@ -193,9 +222,10 @@ app.addEventListener("click", (e) => {
         validationContacts(
           contactsArray,
           contactInputName,
-          contactInputNumber,
+          mask,
           toastText,
           toast,
+          initMasks,
         )
       )
         return;
@@ -204,17 +234,18 @@ app.addEventListener("click", (e) => {
         id: Date.now().toString(),
         name: contactInputName.value,
         phone: contactInputNumber.value,
-        groupId: groupsSelect.value,
+        groupId: selectedGroupId,
       });
 
       localStorage.setItem("contacts", JSON.stringify(contactsArray));
     }
     contactInputName.value = "";
     contactInputNumber.value = "";
-    groupsSelect.value = "";
-
+    selectedGroupId = null;
+    showLoader(loader, true);
     showToast(toast, toastText, "Контакт успешно добавлен");
     setTimeout(() => {
+      showLoader(loader, false);
       renderApp();
     }, 2000);
   }
@@ -254,9 +285,120 @@ app.addEventListener("click", (e) => {
       );
       localStorage.setItem("contacts", JSON.stringify(updatedContacts));
     }
+    showLoader(loader, true);
     showToast(toast, toastText, "Контакт успешно удален");
     setTimeout(() => {
+      showLoader(loader, false);
       renderApp();
     }, 2000);
+  }
+
+  const editContact = target.closest<HTMLButtonElement>(".edit-contact-button");
+  if (editContact) {
+    const editingContacts =
+      document.querySelector<HTMLDivElement>(".editing-contacts");
+    if (!editingContacts) return;
+
+    const contactItem = editContact.closest<HTMLDivElement>(".contact-list");
+    if (!contactItem) return;
+
+    editingContactId = contactItem.dataset.id ?? null;
+    if (!editingContactId) return;
+
+    const contacts = JSON.parse(localStorage.getItem("contacts") || "[]");
+    const contact = contacts.find((c: Contact) => c.id === editingContactId);
+    if (!contact) return;
+
+    const nameInput =
+      document.querySelector<HTMLInputElement>("#edit-contact-name");
+    const phoneInput = document.querySelector<HTMLInputElement>(
+      "#edit-contact-number",
+    );
+
+    if (nameInput && phoneInput) {
+      nameInput.value = contact.name;
+      phoneInput.value = contact.phone;
+    }
+
+    editingContacts.style.display = "flex";
+    mask.style.display = "block";
+
+    initMasks();
+
+    editContactButtonCancel?.addEventListener("click", () => {
+      editingContactId = null;
+      document.querySelector(".editing-contacts")!.style.display = "none";
+      mask.style.display = "none";
+    });
+
+    editContactButtonSave?.addEventListener("click", () => {
+      if (!editingContactId) return;
+
+      const nameInput =
+        document.querySelector<HTMLInputElement>("#edit-contact-name");
+      const phoneInput = document.querySelector<HTMLInputElement>(
+        "#edit-contact-number",
+      );
+
+      if (!nameInput || !phoneInput) return;
+
+      const contacts = JSON.parse(localStorage.getItem("contacts") || "[]");
+      console.log(nameInput.value, phoneInput.value);
+      const updatedContacts = contacts.map((contact: Contact) => {
+        if (contact.id === editingContactId) {
+          return {
+            ...contact,
+            name: nameInput.value,
+            phone: phoneInput.value,
+          };
+        } else {
+          return contact;
+        }
+      });
+
+      localStorage.setItem("contacts", JSON.stringify(updatedContacts));
+
+      editingContactId = null;
+      showLoader(loader, true);
+      showToast(toast, toastText, "Контакт успешно изменен");
+      document.querySelector(".editing-contacts")!.style.display = "none";
+      mask.style.display = "none";
+      setTimeout(() => {
+        showLoader(loader, false);
+        renderApp();
+      }, 2000);
+    });
+  }
+
+  const leftMenuButtonArrow = target.closest<HTMLButtonElement>(
+    ".left-menu-add__button_arrow",
+  );
+  if (leftMenuButtonArrow) {
+    const customSelect = document.querySelector<HTMLDivElement>(
+      ".left-menu-add__options",
+    );
+
+    if (!customSelect) return;
+    console.log(customSelect, "customSelect");
+
+    customSelect.style.opacity = customSelect.style.opacity === "1" ? "0" : "1";
+    leftMenuButtonArrow.classList.toggle("active");
+  }
+  if (target.classList.contains("left-menu-add__option")) {
+    const customSelect = target.closest<HTMLDivElement>(
+      ".left-menu-add__custom-select",
+    );
+    if (!customSelect) return;
+
+    const selectTitle = customSelect.querySelector<HTMLParagraphElement>(
+      ".left-menu-add__select p",
+    )!;
+    const optionsContainer = customSelect.querySelector<HTMLDivElement>(
+      ".left-menu-add__options",
+    )!;
+
+    selectTitle.textContent = target.textContent;
+    selectedGroupId = target.dataset.id ?? null;
+    optionsContainer.style.opacity = "0";
   }
 });

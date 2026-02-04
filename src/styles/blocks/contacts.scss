@@ -86,6 +86,14 @@
         align-items: center;
         gap: 15px;
         margin-left: 40px;
+
+        .edit-contact-button:hover {
+          background-color: $hover-color-primary;
+          color: $color-white;
+        }
+        .delete-contact-button:hover {
+          background-color: $hover-color-red;
+        }
       }
       .contact-list__buttons button {
         width: 38px;

@@ -40,8 +40,71 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    input,
-    select {
+    .left-menu-add__custom-select {
+      position: relative;
+      width: 264px;
+      height: 38px;
+      border-radius: $radius-button;
+      border: none;
+      outline: none;
+      padding: 10px;
+      background-color: $color-bg;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 120%;
+      letter-spacing: 0px;
+      font-family: $font-primary;
+
+      p {
+        color: $color-grey;
+      }
+      .left-menu-add__select {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .left-menu-add__button_arrow {
+          border: none;
+          background-color: transparent;
+          transition: $button-transition;
+        }
+        .active {
+          transform: rotate(180deg);
+        }
+      }
+      .left-menu-add__options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        margin-top: 10px;
+        border-radius: $radius-button;
+        border: none;
+        background-color: $color-bg;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 120%;
+        color: $color-text;
+        letter-spacing: 0px;
+        font-family: $font-primary;
+        opacity: 0;
+        .left-menu-add__options.active {
+          opacity: 1;
+        }
+
+        .left-menu-add__option {
+          width: 100%;
+          padding: 10px;
+          cursor: pointer;
+        }
+        .left-menu-add__option:hover {
+          background-color: rgb(198, 198, 198);
+        }
+        .left-menu-add__option:first-child {
+          margin: 0;
+        }
+      }
+    }
+    input {
       width: 264px;
       height: 38px;
       border-radius: $radius-button;
