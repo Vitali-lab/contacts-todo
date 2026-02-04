@@ -9,7 +9,7 @@ function renderContacts(contacts: Contact[], groups: Group[]): string {
             <div class="main__container">
               ${
                 contacts.length === 0
-                  ? "<p>Список контактов пуст</p>"
+                  ? "<div class='empty-list'><p>Список контактов пуст</p></div>"
                   : groups
                       .map(
                         (groups) => `
