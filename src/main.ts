@@ -17,17 +17,15 @@ import { deleteGroups } from "./functions/deleteGroups.ts";
 import { addGroup } from "./functions/addGroup.ts";
 import { addContacts } from "./functions/addContacts.ts";
 import { deleteContact } from "./functions/deleteContact.ts";
+import { ContactsService } from "./services/ContactsService";
 
+const contactsService = new ContactsService();
 const contactsStorage = new StorageService<Contact>("contacts");
 const groupsStorage = new StorageService<Group>("groups");
 
 function renderApp() {
-  const contactsData: Contact[] = JSON.parse(
-    localStorage.getItem("contacts") || "[]",
-  );
-  const groupsData: Group[] = JSON.parse(
-    localStorage.getItem("groups") || "[]",
-  );
+  const contactsData: Contact[] = contactsService.getAll();
+  const groupsData: Group[] = groupsStorage.get();
 
   app.innerHTML = `
   ${renderMask()}
@@ -130,7 +128,7 @@ app.addEventListener("click", (e) => {
     selectedGroupId,
     loader,
     renderApp,
-    contactsStorage,
+    contactsService,
   );
   //открытие и закрытие контактов
   const arrowBtn = target.closest<HTMLButtonElement>(".arrow-button");
@@ -158,9 +156,15 @@ app.addEventListener("click", (e) => {
     ".delete-contact-button",
   );
   if (deleteContactButton) {
-    deleteContact(deleteContactButton, toast, toastText, loader, renderApp);
+    deleteContact(
+      deleteContactButton,
+      toast,
+      toastText,
+      loader,
+      renderApp,
+      contactsService,
+    );
   }
-
   const editContact = target.closest<HTMLButtonElement>(".edit-contact-button");
   if (editContact) {
     const editingContacts =
@@ -210,21 +214,10 @@ app.addEventListener("click", (e) => {
 
       if (!nameInput || !phoneInput) return;
 
-      const contacts = JSON.parse(localStorage.getItem("contacts") || "[]");
-      console.log(nameInput.value, phoneInput.value);
-      const updatedContacts = contacts.map((contact: Contact) => {
-        if (contact.id === editingContactId) {
-          return {
-            ...contact,
-            name: nameInput.value,
-            phone: phoneInput.value,
-          };
-        } else {
-          return contact;
-        }
+      contactsService.update(editingContactId, {
+        name: nameInput.value,
+        phone: phoneInput.value,
       });
-
-      contactsStorage.set(updatedContacts);
 
       editingContactId = null;
       showLoader(loader, true);

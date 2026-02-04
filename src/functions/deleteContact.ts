@@ -1,4 +1,4 @@
-import type { Contact } from "../types";
+import type { ContactsService } from "../services/ContactsService";
 import { showLoader } from "./showLoader";
 import { showToast } from "./showToast";
 
@@ -8,16 +8,13 @@ export const deleteContact = (
   toastText: HTMLElement,
   loader: HTMLElement,
   renderApp: () => void,
+  contactsService: ContactsService,
 ): void => {
   const contactId =
     deleteContact.closest<HTMLDivElement>(".contact-list")!.dataset.id;
   const contacts = localStorage.getItem("contacts");
   if (contacts) {
-    const contactsArray = JSON.parse(contacts);
-    const updatedContacts = contactsArray.filter(
-      (contact: Contact) => contact.id !== contactId,
-    );
-    localStorage.setItem("contacts", JSON.stringify(updatedContacts));
+    contactsService.remove(contactId!);
   }
   showLoader(loader, true);
   showToast(toast, toastText, "Контакт успешно удален");

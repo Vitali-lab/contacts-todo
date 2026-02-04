@@ -1,5 +1,4 @@
-import type { StorageService } from "../services/StorageServise";
-import type { Contact } from "../types";
+import type { ContactsService } from "../services/ContactsService";
 import { showLoader } from "./showLoader";
 import { showToast } from "./showToast";
 import { validationContacts } from "./validationContacts";
@@ -11,7 +10,7 @@ export const addContacts = (
   selectedGroupId: string | null,
   loader: HTMLElement,
   renderApp: () => void,
-  contactsStorage: StorageService<Contact>,
+  contactsService: ContactsService,
 ): void => {
   if (!(target instanceof HTMLElement)) return;
 
@@ -40,7 +39,7 @@ export const addContacts = (
     }
 
     if (localStorage.getItem("contacts")) {
-      const contactsArray = contactsStorage.get();
+      const contactsArray = contactsService.getAll();
 
       if (
         validationContacts(
@@ -53,14 +52,12 @@ export const addContacts = (
       )
         return;
 
-      contactsArray.push({
+      contactsService.add({
         id: Date.now().toString(),
         name: contactInputName.value,
         phone: contactInputNumber.value,
         groupId: selectedGroupId,
       });
-
-      contactsStorage.set(contactsArray);
     }
     contactInputName.value = "";
     contactInputNumber.value = "";
