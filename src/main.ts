@@ -222,10 +222,9 @@ app.addEventListener("click", (e) => {
         validationContacts(
           contactsArray,
           contactInputName,
-          mask,
+          contactInputNumber,
           toastText,
           toast,
-          initMasks,
         )
       )
         return;
