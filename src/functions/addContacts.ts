@@ -30,30 +30,31 @@ export const addContacts = (
       return;
     }
 
-    if (localStorage.getItem("contacts")) {
-      const contactsArray = contactsService.getAll();
+    const contactsArray = contactsService.getAll();
 
-      if (
-        validationContacts(
-          contactsArray,
-          contactInputName,
-          contactInputNumber,
-          toastText,
-          toast,
-        )
+    if (
+      validationContacts(
+        contactsArray,
+        contactInputName,
+        contactInputNumber,
+        toastText,
+        toast,
+        selectedGroupId,
       )
-        return;
+    )
+      return;
 
-      contactsService.add({
-        id: Date.now().toString(),
-        name: contactInputName.value,
-        phone: contactInputNumber.value,
-        groupId: selectedGroupId,
-      });
-    }
+    contactsService.add({
+      id: Date.now().toString(),
+      name: contactInputName.value,
+      phone: contactInputNumber.value,
+      groupId: selectedGroupId,
+    });
+
     contactInputName.value = "";
     contactInputNumber.value = "";
     selectedGroupId = null;
+
     showLoader(loader, true);
     showToast(toast, toastText, "Контакт успешно добавлен");
     setTimeout(() => {

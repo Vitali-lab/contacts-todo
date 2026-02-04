@@ -7,6 +7,7 @@ export const validationContacts = (
   contactInputNumber: HTMLInputElement,
   toastText: HTMLElement,
   toast: HTMLElement,
+  selectedGroupId: string | null,
 ): boolean => {
   let validated: boolean = false;
   contactsArray.forEach((contact: Contact) => {
@@ -15,6 +16,10 @@ export const validationContacts = (
       validated = true;
     } else if (contact.phone === contactInputNumber.value) {
       showToast(toast, toastText, "Контакт с таким номером уже существует");
+      validated = true;
+    }
+    if (selectedGroupId === null) {
+      showToast(toast, toastText, "Выберите группу");
       validated = true;
     }
   });

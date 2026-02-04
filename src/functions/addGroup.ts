@@ -18,22 +18,19 @@ export const addGroup = (
     const groupsInput =
       document.querySelector<HTMLInputElement>("#group-name")!;
 
-    if (localStorage.getItem("groups")) {
-      const groupsArray = groupsStorage.get();
+    const groupsArray = groupsStorage.get();
 
-      if (validationGroups(groupsArray, groupsInput, toastText, toast)) {
-        groupsInput.value = "";
-        return;
-      }
-
-      groupsArray.push({
-        id: Date.now().toString(),
-        name: groupsInput.value,
-      });
-      groupsStorage.set(groupsArray);
+    if (validationGroups(groupsArray, groupsInput, toastText, toast)) {
+      groupsInput.value = "";
+      return;
     }
+
+    groupsArray.push({
+      id: Date.now().toString(),
+      name: groupsInput.value,
+    });
+    groupsStorage.set(groupsArray);
     groupsInput.value = "";
-    console.log(loader, "load");
 
     showLoader(loader, true);
     showToast(toast, toastText, "Группа успешно добавлена");

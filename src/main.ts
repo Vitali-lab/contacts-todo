@@ -27,19 +27,22 @@ function renderApp() {
   const contactsData: Contact[] = contactsService.getAll();
   const groupsData: Group[] = groupsStorage.get();
 
+  console.log(contactsData, groupsData);
+
   app.innerHTML = `
   ${renderMask()}
   ${renderHeader()}
   ${renderContacts(contactsData, groupsData)}
-  ${renderLeftMenu(contactsData, groupsData)}
+  ${renderLeftMenu(groupsData)}
   ${renderGroups(groupsData)}
   ${renderToast()}
   ${renderPoap()}
   ${renderLoader()}
   ${renderEditingContacts()}
   `;
+
+  initMasks();
 }
-export { renderApp };
 
 const app = document.querySelector("#app")!;
 function initMasks() {
@@ -53,7 +56,6 @@ function initMasks() {
   });
 }
 renderApp();
-initMasks();
 
 let editingContactId: string | null = null;
 let selectedGroupId: string | null = null;
@@ -196,8 +198,11 @@ app.addEventListener("click", (e) => {
     initMasks();
 
     editContactButtonCancel?.addEventListener("click", () => {
+      const editingContacts = document.querySelector(".editing-contacts")!;
+      if (editingContacts instanceof HTMLElement) {
+        editingContacts.style.display = "none";
+      }
       editingContactId = null;
-      document.querySelector(".editing-contacts")!.style.display = "none";
       mask.style.display = "none";
     });
 
@@ -220,7 +225,7 @@ app.addEventListener("click", (e) => {
       editingContactId = null;
       showLoader(loader, true);
       showToast(toast, toastText, "Контакт успешно изменен");
-      document.querySelector(".editing-contacts")!.style.display = "none";
+      editingContacts.style.display = "none";
       mask.style.display = "none";
       setTimeout(() => {
         showLoader(loader, false);

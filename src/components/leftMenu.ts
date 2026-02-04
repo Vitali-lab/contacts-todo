@@ -1,7 +1,7 @@
 import iconExit from "../icons/Vector.svg?raw";
 import iconArrow from "../icons/arrow-down.svg?raw";
-import type { Contact, Group } from "../types";
-function renderLeftMenu(contacts: Contact[], groups: Group[]): string {
+import type { Group } from "../types";
+function renderLeftMenu(groups: Group[]): string {
   return `
         <aside class="left-menu-add">
            <header class="left-menu-add__header">
