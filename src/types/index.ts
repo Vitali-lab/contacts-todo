@@ -2,7 +2,7 @@ export type Contact = {
   id: string;
   name: string;
   phone: string;
-  groupId: string;
+  groupId: string | null;
 };
 
 export type Group = {

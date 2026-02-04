@@ -75,3 +75,31 @@
     }
   }
 }
+
+@media screen and (max-width: 600px) {
+  .header {
+    .header__container {
+      .header__contacts {
+        .header__title h3 {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 500px) {
+  .header {
+    .header__container {
+      .header__button__add {
+        position: absolute;
+        width: 80%;
+        height: 50px;
+        top: 80px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        z-index: 0;
+      }
+    }
+  }
+}

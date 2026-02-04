@@ -7,13 +7,19 @@ import { renderGroups } from "./components/groups.ts";
 import type { Contact, Group } from "./types/index.ts";
 import { renderToast } from "./components/toast.ts";
 import { renderPoap } from "./components/poap.ts";
-import { validationContacts } from "./functions/validationContacts.ts";
-import { validationGroups } from "./functions/validationGroups.ts";
 import { showToast } from "./functions/showToast.ts";
 import { renderLoader } from "./components/loader.ts";
 import { showLoader } from "./functions/showLoader.ts";
 import { renderEditingContacts } from "./components/editingContacts.ts";
+import { StorageService } from "./services/StorageServise.ts";
 import IMask from "imask";
+import { deleteGroups } from "./functions/deleteGroups.ts";
+import { addGroup } from "./functions/addGroup.ts";
+import { addContacts } from "./functions/addContacts.ts";
+import { deleteContact } from "./functions/deleteContact.ts";
+
+const contactsStorage = new StorageService<Contact>("contacts");
+const groupsStorage = new StorageService<Group>("groups");
 
 function renderApp() {
   const contactsData: Contact[] = JSON.parse(
@@ -35,12 +41,8 @@ function renderApp() {
   ${renderEditingContacts()}
   `;
 }
-if (!localStorage.getItem("contacts")) {
-  localStorage.setItem("contacts", JSON.stringify([]));
-}
-if (!localStorage.getItem("groups")) {
-  localStorage.setItem("groups", JSON.stringify([]));
-}
+export { renderApp };
+
 const app = document.querySelector("#app")!;
 function initMasks() {
   const inputs = ["#contact-number", "#edit-contact-number"];
@@ -55,7 +57,6 @@ function initMasks() {
 renderApp();
 initMasks();
 
-let elementId: string | null = null;
 let editingContactId: string | null = null;
 let selectedGroupId: string | null = null;
 
@@ -105,149 +106,32 @@ app.addEventListener("click", (e) => {
 
   //удаление групп
 
-  const deleteBtn = target.closest<HTMLButtonElement>(".groups__button_delete");
-  if (deleteBtn) {
-    elementId = deleteBtn.dataset.groupId!;
-    poap.style.display = "block";
-    setTimeout(() => {
-      poap.style.opacity = "1";
-    }, 100);
-
-    mask.style.display = "block";
-    groups.style.transform = "translateX(-100%)";
-    console.log(elementId);
-    return;
-  }
-
-  const poapConfirm = target.closest<HTMLButtonElement>(
-    ".poap__button_confirm",
+  deleteGroups(
+    groupsStorage,
+    contactsStorage,
+    poap,
+    mask,
+    groups,
+    target,
+    toast,
+    toastText,
+    loader,
+    renderApp,
   );
-  const poapCancel = target.closest<HTMLButtonElement>(".poap__button_cancel");
 
-  if (poapCancel) {
-    poap.style.opacity = "0";
-    setTimeout(() => {
-      poap.style.display = "none";
-      mask.style.display = "none";
-    }, 100);
-    return;
-  }
-
-  if (poapConfirm && elementId) {
-    const groupsArray = JSON.parse(localStorage.getItem("groups") || "[]");
-    const contactsArray = JSON.parse(localStorage.getItem("contacts") || "[]");
-    const updatedGroups = groupsArray.filter(
-      (group: Group) => group.id !== elementId,
-    );
-    const updatedContacts = contactsArray.filter(
-      (contact: Contact) => contact.groupId !== elementId,
-    );
-    localStorage.setItem("contacts", JSON.stringify(updatedContacts));
-    localStorage.setItem("groups", JSON.stringify(updatedGroups));
-
-    elementId = null;
-
-    showToast(toast, toastText, "Группа успешно удалена");
-    showLoader(loader, true);
-    poap.style.display = "none";
-    setTimeout(() => {
-      mask.style.display = "none";
-      renderApp();
-      showLoader(loader, false);
-    }, 2000);
-  }
   //добавление групп
-  if (target.id === "add-group") {
-    const groupsInput =
-      document.querySelector<HTMLInputElement>("#group-name")!;
-
-    if (localStorage.getItem("groups")) {
-      const groupsArray = JSON.parse(localStorage.getItem("groups")!);
-
-      if (validationGroups(groupsArray, groupsInput, toastText, toast)) {
-        groupsInput.value = "";
-        return;
-      }
-
-      groupsArray.push({
-        id: Date.now().toString(),
-        name: groupsInput.value,
-      });
-      localStorage.setItem("groups", JSON.stringify(groupsArray));
-    }
-    groupsInput.value = "";
-    console.log(loader, "load");
-
-    showLoader(loader, true);
-    showToast(toast, toastText, "Группа успешно добавлена");
-    setTimeout(() => {
-      showLoader(loader, false);
-      renderApp();
-    }, 2000);
-  }
-
+  addGroup(target, toast, toastText, loader, groupsStorage, renderApp);
   // добавление контакта
 
-  if (target.id === "add-new-contact") {
-    const contactInputName =
-      document.querySelector<HTMLInputElement>("#contact-name")!;
-    const contactInputNumber =
-      document.querySelector<HTMLInputElement>("#contact-number")!;
-
-    console.log(selectedGroupId, "selectedGroupId");
-
-    if (!contactInputName.value) {
-      contactInputName.style.border = "1px solid red";
-      toastText.textContent = "Введите имя";
-      toast.style.transform = "translateX(0)";
-      setTimeout(() => {
-        toast.style.transform = "translateX(150%)";
-      }, 2000);
-      return;
-    } else if (!contactInputNumber.value) {
-      contactInputNumber.style.border = "1px solid red";
-      toastText.textContent = "Введите номер";
-      toast.style.transform = "translateX(0)";
-      setTimeout(() => {
-        toast.style.transform = "translateX(150%)";
-      }, 2000);
-      return;
-    }
-
-    const contacts = localStorage.getItem("contacts");
-    if (contacts) {
-      const contactsArray = JSON.parse(contacts);
-
-      if (
-        validationContacts(
-          contactsArray,
-          contactInputName,
-          contactInputNumber,
-          toastText,
-          toast,
-        )
-      )
-        return;
-
-      contactsArray.push({
-        id: Date.now().toString(),
-        name: contactInputName.value,
-        phone: contactInputNumber.value,
-        groupId: selectedGroupId,
-      });
-
-      localStorage.setItem("contacts", JSON.stringify(contactsArray));
-    }
-    contactInputName.value = "";
-    contactInputNumber.value = "";
-    selectedGroupId = null;
-    showLoader(loader, true);
-    showToast(toast, toastText, "Контакт успешно добавлен");
-    setTimeout(() => {
-      showLoader(loader, false);
-      renderApp();
-    }, 2000);
-  }
+  addContacts(
+    target,
+    toast,
+    toastText,
+    selectedGroupId,
+    loader,
+    renderApp,
+    contactsStorage,
+  );
   //открытие и закрытие контактов
   const arrowBtn = target.closest<HTMLButtonElement>(".arrow-button");
   if (arrowBtn) {
@@ -270,26 +154,11 @@ app.addEventListener("click", (e) => {
     groupName.style.color = isOpen ? "#111827" : "#005BFE";
   }
 
-  const deleteContact = target.closest<HTMLButtonElement>(
+  const deleteContactButton = target.closest<HTMLButtonElement>(
     ".delete-contact-button",
   );
-  if (deleteContact) {
-    const contactId =
-      deleteContact.closest<HTMLDivElement>(".contact-list")!.dataset.id;
-    const contacts = localStorage.getItem("contacts");
-    if (contacts) {
-      const contactsArray = JSON.parse(contacts);
-      const updatedContacts = contactsArray.filter(
-        (contact: Contact) => contact.id !== contactId,
-      );
-      localStorage.setItem("contacts", JSON.stringify(updatedContacts));
-    }
-    showLoader(loader, true);
-    showToast(toast, toastText, "Контакт успешно удален");
-    setTimeout(() => {
-      showLoader(loader, false);
-      renderApp();
-    }, 2000);
+  if (deleteContactButton) {
+    deleteContact(deleteContactButton, toast, toastText, loader, renderApp);
   }
 
   const editContact = target.closest<HTMLButtonElement>(".edit-contact-button");
@@ -304,7 +173,7 @@ app.addEventListener("click", (e) => {
     editingContactId = contactItem.dataset.id ?? null;
     if (!editingContactId) return;
 
-    const contacts = JSON.parse(localStorage.getItem("contacts") || "[]");
+    const contacts = contactsStorage.get();
     const contact = contacts.find((c: Contact) => c.id === editingContactId);
     if (!contact) return;
 
@@ -355,7 +224,7 @@ app.addEventListener("click", (e) => {
         }
       });
 
-      localStorage.setItem("contacts", JSON.stringify(updatedContacts));
+      contactsStorage.set(updatedContacts);
 
       editingContactId = null;
       showLoader(loader, true);
@@ -378,7 +247,6 @@ app.addEventListener("click", (e) => {
     );
 
     if (!customSelect) return;
-    console.log(customSelect, "customSelect");
 
     customSelect.style.opacity = customSelect.style.opacity === "1" ? "0" : "1";
     leftMenuButtonArrow.classList.toggle("active");
