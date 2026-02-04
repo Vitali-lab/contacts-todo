@@ -30,8 +30,8 @@ function renderContacts(contacts: Contact[], groups: Group[]): string {
                 <p class="contact-list__phone">${contact.phone}</p>
                 </div>
                   <div class="contact-list__buttons">
-                  <button class="edit-button">${iconPencil}</button>
-                  <button class="delete-button">${iconBacket}</button>
+                  <button class="edit-contact-button">${iconPencil}</button>
+                  <button class="delete-contact-button">${iconBacket}</button>
                   </div>
                   </div>
                   `;
