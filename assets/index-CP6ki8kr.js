@@ -25,7 +25,7 @@
 `;function vt(r,t){return`
         <main class="main">
             <div class="main__container">
-              ${r.length===0?"<p>Список контактов пуст</p>":t.map(e=>`
+              ${r.length===0?"<div class='empty-list'><p>Список контактов пуст</p></div>":t.map(e=>`
               <div class="group-list">
                  <div class="group">
                  <h3 class="group__name">${e.name}</h3>
