@@ -22,19 +22,11 @@ export const addContacts = (
 
     if (!contactInputName.value) {
       contactInputName.style.border = "1px solid red";
-      toastText.textContent = "Введите имя";
-      toast.style.transform = "translateX(0)";
-      setTimeout(() => {
-        toast.style.transform = "translateX(150%)";
-      }, 2000);
+      showToast(toast, toastText, "Введите имя");
       return;
     } else if (!contactInputNumber.value) {
       contactInputNumber.style.border = "1px solid red";
-      toastText.textContent = "Введите номер";
-      toast.style.transform = "translateX(0)";
-      setTimeout(() => {
-        toast.style.transform = "translateX(150%)";
-      }, 2000);
+      showToast(toast, toastText, "Введите номер");
       return;
     }
 

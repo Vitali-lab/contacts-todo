@@ -13,6 +13,10 @@ export const validationGroups = (
       showToast(toast, toastText, "Группа с таким именем уже существует");
       validated = true;
     }
+    if (groupsInput.value === "") {
+      showToast(toast, toastText, "Введите название группы");
+      validated = true;
+    }
   });
   return validated;
 };

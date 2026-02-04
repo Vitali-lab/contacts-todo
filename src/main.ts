@@ -96,8 +96,9 @@ app.addEventListener("click", (e) => {
   const buttonGroup = target.closest<HTMLButtonElement>(
     ".groups__button_close",
   );
+  const buttonSave = target.closest<HTMLButtonElement>(".groups__button_save");
 
-  if (buttonGroup && buttonGroup.id === "close-groups") {
+  if ((buttonGroup && buttonGroup.id === "close-groups") || buttonSave) {
     groups.style.transform = "translateX(-100%)";
     mask.style.display = "none";
   }
