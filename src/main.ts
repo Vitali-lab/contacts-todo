@@ -27,8 +27,6 @@ function renderApp() {
   const contactsData: Contact[] = contactsService.getAll();
   const groupsData: Group[] = groupsStorage.get();
 
-  console.log(contactsData, groupsData);
-
   app.innerHTML = `
   ${renderMask()}
   ${renderHeader()}

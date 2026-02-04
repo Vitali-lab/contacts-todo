@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  root: "./",
+  base: "/contacts-todo/",
   build: {
     outDir: "dist",
   },
