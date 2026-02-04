@@ -27,7 +27,7 @@ function renderGroups(groups: Group[]): string {
       </ul>
            <div class="group">
            <input id="group-name" type="text" placeholder="Введите название "/>
-           <button class="groups__button_delete">${iconBasket}</button>
+           
            </div>
            </main>
            <footer class="groups__footer">

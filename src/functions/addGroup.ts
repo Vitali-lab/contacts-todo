@@ -12,7 +12,7 @@ export const addGroup = (
   groupsStorage: StorageService<Group>,
   renderApp: () => void,
 ): void => {
-  if (!(target instanceof HTMLElement)) return;
+  if (!(target instanceof Element)) return;
 
   if (target.id === "add-group") {
     const groupsInput =

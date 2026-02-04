@@ -22,7 +22,7 @@
 
       .header__title h3 {
         font-size: 18px;
-        font-weight: 400;
+        font-weight: 700;
         line-height: 120%;
         color: $color-primary;
         letter-spacing: 0px;
@@ -57,7 +57,7 @@
     .header__button__add::after {
       content: "+";
       margin-left: 10px;
-      font-size: 20px;
+      font-size: 14px;
     }
     .header__button {
       width: 82px;
@@ -66,9 +66,11 @@
       border-radius: $radius-button;
       background-color: $color-primary;
       color: $color-white;
-      font-size: 14px;
-      font-weight: 700;
       transition: $button-transition;
+      button {
+        font-size: 14px;
+        font-weight: 700;
+      }
     }
     .header__button:hover {
       background-color: $hover-color-primary;

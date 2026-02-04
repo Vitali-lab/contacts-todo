@@ -1,10 +1,12 @@
 .main {
   width: 100%;
-  height: calc(100vh - 70px);
+  height: 100vh;
+  min-width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: $color-bg;
+  padding-bottom: 70px;
 
   .main__container {
     width: 100%;
@@ -14,7 +16,7 @@
     flex-direction: column;
     justify-content: start;
     align-items: center;
-    margin-top: 130px;
+    margin-top: 70px;
 
     .group-list {
       width: 100%;
@@ -35,15 +37,19 @@
         justify-content: space-between;
         align-items: center;
 
-        h3 {
+        .group__name {
           color: $color-text;
           font-size: 18px;
           font-weight: 700;
+          transition: $button-transition;
         }
       }
 
       .contacts {
-        display: none;
+        height: 0px;
+        opacity: 0;
+        transition: $button-transition;
+        overflow: hidden;
       }
 
       .contact-list {

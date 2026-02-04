@@ -16,7 +16,7 @@ function renderContacts(contacts: Contact[], groups: Group[]): string {
               <div class="group-list">
                  <div class="group">
                  <h3 class="group__name">${groups.name}</h3>
-                 <button id="arrow-down"  class = "arrow-button">${iconArrowDown}</button>
+                 <button  class = "arrow-button">${iconArrowDown}</button>
                  </div>
                  <div class="contacts">
               ${

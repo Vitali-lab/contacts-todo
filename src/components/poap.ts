@@ -1,6 +1,6 @@
 function renderPoap(): string {
   return `
-        <section class="poap">
+        <section class="poap" data-group-id="">
          <div class="poap__container">
          <div class="poap__main__text">
          <h3>Удалить группу?</h3>

@@ -102,8 +102,6 @@ app.addEventListener("click", (e) => {
     mask.style.display = "none";
   }
 
-  //удаление групп
-
   deleteGroups(
     groupsStorage,
     contactsStorage,
@@ -117,9 +115,7 @@ app.addEventListener("click", (e) => {
     renderApp,
   );
 
-  //добавление групп
   addGroup(target, toast, toastText, loader, groupsStorage, renderApp);
-  // добавление контакта
 
   addContacts(
     target,
@@ -130,7 +126,7 @@ app.addEventListener("click", (e) => {
     renderApp,
     contactsService,
   );
-  //открытие и закрытие контактов
+
   const arrowBtn = target.closest<HTMLButtonElement>(".arrow-button");
   if (arrowBtn) {
     const groupContainer = arrowBtn.closest<HTMLDivElement>(".group-list");
@@ -144,8 +140,9 @@ app.addEventListener("click", (e) => {
       groupContainer.querySelector<HTMLDivElement>(".contacts");
     if (!contactsContainer) return;
 
-    const isOpen = contactsContainer.style.display === "block";
-    contactsContainer.style.display = isOpen ? "none" : "block";
+    const isOpen = contactsContainer.style.height === "auto";
+    contactsContainer.style.height = isOpen ? "0" : "auto";
+    contactsContainer.style.opacity = isOpen ? "0" : "1";
 
     arrowBtn.style.transform = isOpen ? "rotate(0deg)" : "rotate(180deg)";
 

@@ -3,8 +3,6 @@ import type { Contact, Group } from "../types";
 import { showLoader } from "./showLoader";
 import { showToast } from "./showToast";
 
-let elementId: string | null = null;
-
 export const deleteGroups = (
   groupsStorage: StorageService<Group>,
   contactsStorage: StorageService<Contact>,
@@ -16,11 +14,15 @@ export const deleteGroups = (
   toastText: HTMLElement,
   loader: HTMLElement,
   renderApp: () => void,
-): void | string => {
-  if (!(target instanceof HTMLElement)) return;
+): void => {
+  if (!(target instanceof Element)) return;
+
   const deleteBtn = target.closest<HTMLButtonElement>(".groups__button_delete");
   if (deleteBtn) {
-    elementId = deleteBtn.dataset.groupId!;
+    const groupId = deleteBtn.dataset.groupId;
+    if (!groupId) return;
+
+    poap.dataset.groupId = groupId;
     poap.style.display = "block";
     setTimeout(() => {
       poap.style.opacity = "1";
@@ -28,15 +30,10 @@ export const deleteGroups = (
 
     mask.style.display = "block";
     groups.style.transform = "translateX(-100%)";
-
     return;
   }
 
-  const poapConfirm = target.closest<HTMLButtonElement>(
-    ".poap__button_confirm",
-  );
   const poapCancel = target.closest<HTMLButtonElement>(".poap__button_cancel");
-
   if (poapCancel) {
     poap.style.opacity = "0";
     setTimeout(() => {
@@ -46,26 +43,35 @@ export const deleteGroups = (
     return;
   }
 
-  if (poapConfirm && elementId) {
+  const poapConfirm = target.closest<HTMLButtonElement>(
+    ".poap__button_confirm",
+  );
+  if (poapConfirm) {
+    const groupId = poap.dataset.groupId;
+    if (!groupId) return;
+
     const groupsArray = groupsStorage.get();
     const contactsArray = contactsStorage.get();
-    const updatedGroups = groupsArray.filter(
-      (group: Group) => group.id !== elementId,
-    );
+
+    const updatedGroups = groupsArray.filter((group) => group.id !== groupId);
     const updatedContacts = contactsArray.filter(
-      (contact: Contact) => contact.groupId !== elementId,
+      (contact) => contact.groupId !== groupId,
     );
 
-    contactsStorage.set(updatedContacts);
     groupsStorage.set(updatedGroups);
-    elementId = null;
+    contactsStorage.set(updatedContacts);
+
+    poap.style.opacity = "0";
+    setTimeout(() => {
+      poap.style.display = "none";
+      mask.style.display = "none";
+    }, 100);
+
     showToast(toast, toastText, "Группа успешно удалена");
     showLoader(loader, true);
-    poap.style.display = "none";
     setTimeout(() => {
-      mask.style.display = "none";
-      renderApp();
       showLoader(loader, false);
+      renderApp();
     }, 2000);
   }
 };

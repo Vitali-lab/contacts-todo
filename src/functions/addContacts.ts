@@ -12,7 +12,7 @@ export const addContacts = (
   renderApp: () => void,
   contactsService: ContactsService,
 ): void => {
-  if (!(target instanceof HTMLElement)) return;
+  if (!(target instanceof Element)) return;
 
   if (target.id === "add-new-contact") {
     const contactInputName =
